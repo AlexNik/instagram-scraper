@@ -760,11 +760,13 @@ class InstagramScraper(object):
         if self.logged_in and \
                 ('story-image' in self.media_types or 'story-video' in self.media_types):
             # Get the user's stories.
-            stories = self.fetch_stories(user['id'])
+            all_stories = []
+            all_stories.extend(self.fetch_main_stories(user['id']))
+            all_stories.extend(self.fetch_highlight_stories(user['id']))
 
             # Downloads the user's stories and sends it to the executor.
             iter = 0
-            for item in tqdm.tqdm(stories, desc='Searching {0} for stories'.format(username), unit=" media",
+            for item in tqdm.tqdm(all_stories, desc='Searching {0} for stories'.format(username), unit=" media",
                                   disable=self.quiet):
                 if self.story_has_selected_media_types(item) and self.is_new_media(item):
                     item['username'] = username
@@ -834,14 +836,39 @@ class InstagramScraper(object):
             except (TypeError, KeyError, IndexError):
                 pass
 
-    def fetch_stories(self, user_id):
-        """Fetches the user's stories."""
-        resp = self.get_json(STORIES_URL.format(user_id))
+    def __fetch_stories(self, url):
+        resp = self.get_json(url)
 
         if resp is not None:
             retval = json.loads(resp)
             if retval['data'] and 'reels_media' in retval['data'] and len(retval['data']['reels_media']) > 0 and len(retval['data']['reels_media'][0]['items']) > 0:
-                return [self.set_story_url(item) for item in retval['data']['reels_media'][0]['items']]
+                items = []
+
+                for reel_media in retval['data']['reels_media']:
+                    items.extend([self.set_story_url(item) for item in reel_media['items']])
+
+                return items
+
+        return []
+
+    def fetch_main_stories(self, user_id):
+        """Fetches the user's main stories."""
+        return self.__fetch_stories(MAIN_STORIES_URL.format(user_id))
+
+    def fetch_highlight_stories(self, user_id):
+        """Fetches the user's highlight stories."""
+
+        resp = self.get_json(HIGHLIGHT_STORIES_USER_ID_URL.format(user_id))
+
+        if resp is not None:
+            retval = json.loads(resp)
+
+            if retval['data'] and 'user' in retval['data'] and 'edge_highlight_reels' in retval['data']['user'] and \
+                    'edges' in retval['data']['user']['edge_highlight_reels']:
+                higlight_stories_ids = [item['node']['id'] for item in
+                                        retval['data']['user']['edge_highlight_reels']['edges']]
+
+                return self.__fetch_stories(HIGHLIGHT_STORIES_REEL_ID_URL.format('%22%2C%22'.join(str(x) for x in higlight_stories_ids)))
 
         return []
 
