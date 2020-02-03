@@ -868,7 +868,17 @@ class InstagramScraper(object):
                 higlight_stories_ids = [item['node']['id'] for item in
                                         retval['data']['user']['edge_highlight_reels']['edges']]
 
-                return self.__fetch_stories(HIGHLIGHT_STORIES_REEL_ID_URL.format('%22%2C%22'.join(str(x) for x in higlight_stories_ids)))
+                # Workaround for issue https://github.com/rarcega/instagram-scraper/issues/488
+                # __fetch_stories with count of ids more than 20 some times returns "Bad gateway" error.
+                # Instagram web site fetches by 3.
+                ids_chunks = [higlight_stories_ids[i:i + 3] for i in range(0, len(higlight_stories_ids), 3)]
+
+                stories = []
+
+                for ids_chunk in ids_chunks:
+                    stories.extend(self.__fetch_stories(HIGHLIGHT_STORIES_REEL_ID_URL.format('%22%2C%22'.join(str(x) for x in ids_chunk))))
+
+                return stories
 
         return []
 
