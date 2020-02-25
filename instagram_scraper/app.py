@@ -929,14 +929,14 @@ class InstagramScraper(object):
                 dash_manifest = ET.fromstring(broadcast['dash_manifest'])
                 xmlns = '{urn:mpeg:dash:schema:mpd:2011}'
 
-                video_adaptation_set = dash_manifest.find(f'.//{xmlns}Representation[@mimeType="video/mp4"]/..')
-                audio_adaptation_set = dash_manifest.find(f'.//{xmlns}Representation[@mimeType="audio/mp4"]/..')
+                video_adaptation_set = dash_manifest.find('.//{0}Representation[@mimeType="video/mp4"]/..'.format(xmlns))
+                audio_adaptation_set = dash_manifest.find('.//{0}Representation[@mimeType="audio/mp4"]/..'.format(xmlns))
 
                 best_video_quality = (video_adaptation_set.get('maxWidth'), video_adaptation_set.get('maxHeight'))
-                video_element = video_adaptation_set.find(f'.//*[@width="{best_video_quality[0]}"][@height="{best_video_quality[1]}"]/{xmlns}BaseURL')
+                video_element = video_adaptation_set.find('.//*[@width="{0}"][@height="{1}"]/{2}BaseURL'.format(best_video_quality[0], best_video_quality[1], xmlns))
                 video_url = video_element.text
 
-                audio_element = audio_adaptation_set.find(f'.//{xmlns}BaseURL')
+                audio_element = audio_adaptation_set.find('.//{0}BaseURL'.format(xmlns))
                 audio_url = audio_element.text
 
                 ret = {
