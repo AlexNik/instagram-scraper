@@ -3,7 +3,8 @@ from setuptools import setup, find_packages
 
 requires = [
     'requests>=2.18.4',
-    'tqdm>=3.8.0'
+    'tqdm>=3.8.0',
+    'moviepy>=1.0.1'
 ]
 
 if sys.version_info < (3, 2):
