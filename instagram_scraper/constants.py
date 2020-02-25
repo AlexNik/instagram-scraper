@@ -10,6 +10,8 @@ HIGHLIGHT_STORIES_USER_ID_URL = BASE_URL + 'graphql/query/?query_hash=c9100bf911
 HIGHLIGHT_STORIES_REEL_ID_URL = BASE_URL + 'graphql/query/?query_hash=45246d3fe16ccc6577e0bd297a5db1ab&variables=%7B%22reel_ids%22%3A%5B%5D%2C%22tag_names%22%3A%5B%5D%2C%22location_ids%22%3A%5B%5D%2C%22highlight_reel_ids%22%3A%5B%22{0}%22%5D%2C%22precomposed_overlay%22%3Afalse%7D'
 STORIES_UA = 'Instagram 123.0.0.21.114 (iPhone; CPU iPhone OS 11_4 like Mac OS X; en_US; en-US; scale=2.00; 750x1334) AppleWebKit/605.1.15'
 
+BROADCAST_URL = BASE_URL + 'api/v1/feed/user/{0}/story/'
+
 TAGS_URL = BASE_URL + 'explore/tags/{0}/?__a=1'
 LOCATIONS_URL = BASE_URL + 'explore/locations/{0}/?__a=1'
 VIEW_MEDIA_URL = BASE_URL + 'p/{0}/?__a=1'
