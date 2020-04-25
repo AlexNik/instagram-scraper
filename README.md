@@ -123,7 +123,7 @@ OPTIONS
                         set.
 
 --media-types -t        Specify media types to scrape. Enter as space separated values. 
-                        Valid values are image, video, story (story-image & story-video),
+                        Valid values are image, video, story (story-image & story-video), broadcast
                         or none. Stories require a --login-user and --login-pass to be defined.
                       
 --latest                Scrape only new media since the last scrape. Uses the last modified
